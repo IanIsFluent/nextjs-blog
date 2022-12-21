@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Propel API Example</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -93,11 +93,13 @@ export default function Home() {
       queryKey: ['acAll'],
       enabled: false,
       retry: false,
-      queryFn: () =>
-        fetch(
+      queryFn: async () => {
+        var res = await fetch(
           'https://become-propel-preview.azurewebsites.net/api/v1/autocomplete/all?q=' +
             acAllValue
-        ),
+        );
+        return res.json();
+      },
     });
 
     return (
@@ -113,36 +115,29 @@ export default function Home() {
 
         <div className={styles.grid}>
           <div className={styles.card}>
-            <h3>Autocompletes</h3>
-            <form>
-              <label
-                htmlFor="all"
-                style={{
-                  marginRight: '.5em',
-                }}
-              >
-                All
-              </label>
-              <input
-                type="text"
-                id="all"
-                name="all"
-                style={{
-                  marginRight: '.5em',
-                }}
-                value={acAllValue}
-                onChange={(e) => setAcAllValue(e.target.value)}
-              ></input>
-              <button type="button" onClick={() => refetch()}>
-                Send
-              </button>
-            </form>
+            <h3>Autocomplete</h3>
+            <label
+              htmlFor="all"
+              style={{
+                marginRight: '.5em',
+              }}
+            >
+              All
+            </label>
+            <input
+              type="text"
+              id="all"
+              name="all"
+              style={{
+                marginRight: '.5em',
+              }}
+              value={acAllValue}
+              onChange={(e) => setAcAllValue(e.target.value)}
+            ></input>
+            <button type="button" onClick={() => refetch()}>
+              Send
+            </button>
           </div>
-          {/* <a href="https://nextjs.org/docs" className={styles.card}>
-      <h3>Documentation &rarr;</h3>
-      <p>Find in-depth information about Next.js features and API.</p>
-      </a> */}
-
           <a href="https://nextjs.org/learn" className={styles.card}>
             <h3>Learn &rarr;</h3>
             <p>Learn about Next.js in an interactive course with quizzes!</p>
@@ -172,13 +167,14 @@ export default function Home() {
             width: '100%',
             backgroundColor: 'lightyellow',
             padding: '1em',
-            fontFamily: 'monospace',
+            maxHeight: '50vh',
+            overflow: 'auto',
           }}
         >
           <>
             {isError && <div>Error: {(error as any)?.message}</div>}
             {isLoading && <div>Loading...</div>}
-            {isSuccess && JSON.stringify(data, null, 2)}
+            {isSuccess && <pre>{JSON.stringify(data, null, 2)}</pre>}
           </>
         </div>
       </main>
