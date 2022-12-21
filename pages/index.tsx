@@ -103,6 +103,7 @@ export default function Home() {
 
     const queries = {
       acAll: useQuery({
+        queryKey: ['acAll'],
         queryFn: async () => {
           setActiveQueryName('acAll');
           var res = await fetch(
@@ -112,6 +113,7 @@ export default function Home() {
         },
       }),
       acCourses: useQuery({
+        queryKey: ['acCourses'],
         queryFn: async () => {
           setActiveQueryName('acCourses');
           var res = await fetch(
@@ -121,6 +123,7 @@ export default function Home() {
         },
       }),
       acInstitutions: useQuery({
+        queryKey: ['acInstitutions'],
         queryFn: async () => {
           setActiveQueryName('acInstitutions');
           var res = await fetch(
@@ -130,6 +133,7 @@ export default function Home() {
         },
       }),
       acSubjects: useQuery({
+        queryKey: ['acSubjects'],
         queryFn: async () => {
           setActiveQueryName('acSubjects');
           var res = await fetch(
@@ -139,6 +143,7 @@ export default function Home() {
         },
       }),
       acPlaces: useQuery({
+        queryKey: ['acPlaces'],
         queryFn: async () => {
           setActiveQueryName('acPlaces');
           var res = await fetch(
@@ -148,6 +153,7 @@ export default function Home() {
         },
       }),
       instDetails: useQuery({
+        queryKey: ['instDetails'],
         queryFn: async () => {
           setActiveQueryName('instDetails');
           var res = await fetch(
@@ -160,6 +166,7 @@ export default function Home() {
         },
       }),
       instSearch: useQuery({
+        queryKey: ['instSearch'],
         queryFn: async () => {
           setActiveQueryName('instSearch');
           var res = await fetch(
@@ -169,6 +176,7 @@ export default function Home() {
         },
       }),
       placesList: useQuery({
+        queryKey: ['placesList'],
         queryFn: async () => {
           setActiveQueryName('placesList');
           var res = await fetch(`${apiBaseUrl}/places`);
