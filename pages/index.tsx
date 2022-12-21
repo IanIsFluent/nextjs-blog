@@ -108,6 +108,10 @@ export default function Home() {
     const [acSubjectsValue, setAcSubjectsValue] = useState('art');
     const [acPlacesValue, setAcPlacesValue] = useState('art');
 
+    const [instDetailsValue, setInstDetailsValue] = useState(
+      'the-university-of-cambridge'
+    );
+
     const queries = {
       acAll: useQuery({
         queryFn: async () => {
@@ -154,6 +158,21 @@ export default function Home() {
           return res.json();
         },
       }),
+      instDetails: useQuery({
+        queryKey: ['instDetails', instDetailsValue],
+        queryFn: async () => {
+          setActiveQueryName('instDetails');
+          var res = await fetch(
+            `${apiBaseUrl}/institutions/${instDetailsValue}`
+          );
+          const json = await res.json();
+          return {
+            ...json,
+            FundingSummary: json.FundingSummary.substring(0, 80),
+            FurtherInformation: json.FurtherInformation.substring(0, 80),
+          };
+        },
+      }),
     };
     const latestQuery = queries[activeQueryName];
 
@@ -166,7 +185,7 @@ export default function Home() {
         </p>
 
         <div className={styles.grid}>
-          <div className={styles.card}>
+          <div className={styles.card} style={{ minWidth: '23em' }}>
             <h3>Autocomplete</h3>
             <Autocomplete
               label="All"
@@ -199,7 +218,39 @@ export default function Home() {
               setValue={setAcPlacesValue}
             />
           </div>
-          <a href="https://nextjs.org/learn" className={styles.card}>
+
+          <div className={styles.card} style={{ minWidth: '23em' }}>
+            <h3>Institutions</h3>
+            <div>
+              <label
+                style={{
+                  display: 'inline-block',
+                  width: '5em',
+                  marginRight: '.5em',
+                }}
+              >
+                Details
+              </label>
+              <input
+                type="text"
+                style={{
+                  marginRight: '.5em',
+                  maxWidth: '12em',
+                }}
+                value={instDetailsValue}
+                onChange={(e) => setInstDetailsValue(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  queries.instDetails.refetch();
+                }}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+          {/* <a href="https://nextjs.org/learn" className={styles.card}>
             <h3>Learn &rarr;</h3>
             <p>Learn about Next.js in an interactive course with quizzes!</p>
           </a>
@@ -220,7 +271,7 @@ export default function Home() {
             <p>
               Instantly deploy your Next.js site to a public URL with Vercel.
             </p>
-          </a>
+          </a> */}
         </div>
         <h3>Results</h3>
         <div
@@ -238,7 +289,7 @@ export default function Home() {
                 <div>Error: {(latestQuery.error as any)?.message}</div>
               )}
               {latestQuery.isFetching && <div>Loading...</div>}
-              {latestQuery.isSuccess && (
+              {!latestQuery.isFetching && latestQuery.isSuccess && (
                 <pre>{JSON.stringify(latestQuery.data, null, 2)}</pre>
               )}
             </>

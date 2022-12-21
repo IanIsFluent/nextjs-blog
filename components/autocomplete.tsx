@@ -20,7 +20,7 @@ function Autocomplete({ label, update, value, setValue }) {
         name="all"
         style={{
           marginRight: '.5em',
-          maxWidth: '8em',
+          maxWidth: '12em',
         }}
         value={value}
         onChange={(e) => setValue(e.target.value)}
