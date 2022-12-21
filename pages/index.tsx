@@ -1,13 +1,10 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import Link from 'next/link';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
-  useQueryClient,
-  UseQueryResult,
 } from '@tanstack/react-query';
 import { Autocomplete } from '../components/autocomplete';
 
@@ -31,17 +28,6 @@ export default function Home() {
       <QueryClientProvider client={queryClient}>
         <Main />
       </QueryClientProvider>
-
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className={styles.logo} />
-        </a>
-      </footer>
 
       <style jsx>{`
         main {
@@ -168,13 +154,34 @@ export default function Home() {
           const json = await res.json();
           return {
             ...json,
-            FundingSummary: json.FundingSummary.substring(0, 80),
-            FurtherInformation: json.FurtherInformation.substring(0, 80),
+            FundingSummary: json.FundingSummary,
+            FurtherInformation: json.FurtherInformation,
           };
         },
       }),
     };
     const latestQuery = queries[activeQueryName];
+    const resultText = useMemo(() => {
+      if (!latestQuery) {
+        return '';
+      }
+      if (latestQuery.isFetching) {
+        return 'Loading...';
+      }
+      if (latestQuery.isError) {
+        return `Error: ${latestQuery.error.message}`;
+      }
+      if (latestQuery.data) {
+        return JSON.stringify(latestQuery.data, null, 2);
+      }
+      return '';
+    }, [
+      activeQueryName,
+      latestQuery?.isFetching,
+      latestQuery?.data,
+      latestQuery?.isError,
+      latestQuery?.error,
+    ]);
 
     return (
       <main>
@@ -250,50 +257,15 @@ export default function Home() {
               </button>
             </div>
           </div>
-          {/* <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a> */}
         </div>
-        <h3>Results</h3>
-        <div
-          style={{
-            width: '100%',
-            backgroundColor: 'lightyellow',
-            padding: '1em',
-            maxHeight: '50vh',
-            overflow: 'auto',
-          }}
-        >
-          {latestQuery && (
-            <>
-              {latestQuery.isError && (
-                <div>Error: {(latestQuery.error as any)?.message}</div>
-              )}
-              {latestQuery.isFetching && <div>Loading...</div>}
-              {!latestQuery.isFetching && latestQuery.isSuccess && (
-                <pre>{JSON.stringify(latestQuery.data, null, 2)}</pre>
-              )}
-            </>
-          )}
+        <div>
+          <h3>Results</h3>
+          <textarea
+            rows={20}
+            readOnly={true}
+            style={{ width: '100%' }}
+            value={resultText}
+          />
         </div>
       </main>
     );
