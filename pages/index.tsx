@@ -100,18 +100,61 @@ export default function Home() {
     const propelWebUrl = 'https://become-propel-preview.azurewebsites.net';
     const apiBaseUrl = `${propelWebUrl}/api/v1`;
 
-    const [acAllValue, setAcAllValue] = useState('art');
     const [activeQueryName, setActiveQueryName] = useState('');
 
-    const acAll = useQuery({
-      queryFn: async () => {
-        setActiveQueryName('acAll');
-        var res = await fetch(`${apiBaseUrl}/autocomplete/all?q=${acAllValue}`);
-        return res.json();
-      },
-    });
+    const [acAllValue, setAcAllValue] = useState('art');
+    const [acCoursesValue, setAcCoursesValue] = useState('art');
+    const [acInstitutionsValue, setAcInstitutionsValue] = useState('art');
+    const [acSubjectsValue, setAcSubjectsValue] = useState('art');
+    const [acPlacesValue, setAcPlacesValue] = useState('art');
 
-    const queries = { acAll };
+    const queries = {
+      acAll: useQuery({
+        queryFn: async () => {
+          setActiveQueryName('acAll');
+          var res = await fetch(
+            `${apiBaseUrl}/autocomplete/all?q=${acAllValue}`
+          );
+          return res.json();
+        },
+      }),
+      acCourses: useQuery({
+        queryFn: async () => {
+          setActiveQueryName('acCourses');
+          var res = await fetch(
+            `${apiBaseUrl}/autocomplete/courses?q=${acCoursesValue}`
+          );
+          return res.json();
+        },
+      }),
+      acInstitutions: useQuery({
+        queryFn: async () => {
+          setActiveQueryName('acInstitutions');
+          var res = await fetch(
+            `${apiBaseUrl}/autocomplete/institutions?q=${acInstitutionsValue}`
+          );
+          return res.json();
+        },
+      }),
+      acSubjects: useQuery({
+        queryFn: async () => {
+          setActiveQueryName('acSubjects');
+          var res = await fetch(
+            `${apiBaseUrl}/autocomplete/subjects?q=${acSubjectsValue}`
+          );
+          return res.json();
+        },
+      }),
+      acPlaces: useQuery({
+        queryFn: async () => {
+          setActiveQueryName('acPlaces');
+          var res = await fetch(
+            `${apiBaseUrl}/autocomplete/places?q=${acPlacesValue}`
+          );
+          return res.json();
+        },
+      }),
+    };
     const latestQuery = queries[activeQueryName];
 
     return (
@@ -127,9 +170,33 @@ export default function Home() {
             <h3>Autocomplete</h3>
             <Autocomplete
               label="All"
-              update={acAll.refetch}
+              update={queries.acAll.refetch}
               value={acAllValue}
               setValue={setAcAllValue}
+            />
+            <Autocomplete
+              label="Courses"
+              update={queries.acCourses.refetch}
+              value={acCoursesValue}
+              setValue={setAcCoursesValue}
+            />
+            <Autocomplete
+              label="Institutions"
+              update={queries.acInstitutions.refetch}
+              value={acInstitutionsValue}
+              setValue={setAcInstitutionsValue}
+            />
+            <Autocomplete
+              label="Subjects"
+              update={queries.acSubjects.refetch}
+              value={acSubjectsValue}
+              setValue={setAcSubjectsValue}
+            />
+            <Autocomplete
+              label="Places"
+              update={queries.acPlaces.refetch}
+              value={acPlacesValue}
+              setValue={setAcPlacesValue}
             />
           </div>
           <a href="https://nextjs.org/learn" className={styles.card}>

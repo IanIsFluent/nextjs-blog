@@ -3,10 +3,12 @@ import { useState } from 'react';
 
 function Autocomplete({ label, update, value, setValue }) {
   return (
-    <>
+    <div>
       <label
         htmlFor="all"
         style={{
+          display: 'inline-block',
+          width: '5em',
           marginRight: '.5em',
         }}
       >
@@ -18,6 +20,7 @@ function Autocomplete({ label, update, value, setValue }) {
         name="all"
         style={{
           marginRight: '.5em',
+          maxWidth: '8em',
         }}
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -25,7 +28,7 @@ function Autocomplete({ label, update, value, setValue }) {
       <button type="button" onClick={() => update()}>
         Send
       </button>
-    </>
+    </div>
   );
 }
 
