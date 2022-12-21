@@ -7,9 +7,18 @@ import {
   QueryClientProvider,
   useQuery,
   useQueryClient,
+  UseQueryResult,
 } from '@tanstack/react-query';
+import { Autocomplete } from '../components/autocomplete';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      enabled: false,
+      retry: false,
+    },
+  },
+});
 
 export default function Home() {
   return (
@@ -88,55 +97,40 @@ export default function Home() {
   );
 
   function Main() {
+    const propelWebUrl = 'https://become-propel-preview.azurewebsites.net';
+    const apiBaseUrl = `${propelWebUrl}/api/v1`;
+
     const [acAllValue, setAcAllValue] = useState('art');
-    const { isLoading, isError, data, isSuccess, error, refetch } = useQuery({
-      queryKey: ['acAll'],
-      enabled: false,
-      retry: false,
+    const [activeQueryName, setActiveQueryName] = useState('');
+
+    const acAll = useQuery({
       queryFn: async () => {
-        var res = await fetch(
-          'https://become-propel-preview.azurewebsites.net/api/v1/autocomplete/all?q=' +
-            acAllValue
-        );
+        setActiveQueryName('acAll');
+        var res = await fetch(`${apiBaseUrl}/autocomplete/all?q=${acAllValue}`);
         return res.json();
       },
     });
 
+    const queries = { acAll };
+    const latestQuery = queries[activeQueryName];
+
     return (
       <main>
-        <h1 className={styles.title}>
-          Read <Link href="/posts/first-post">my first page!</Link>
-        </h1>
+        <h1 className={styles.title}>Propel API Examples</h1>
 
         <p className={styles.description}>
-          Using propel API at
-          https://become-propel-preview.azurewebsites.net/swagger.
+          Using propel API <a href={`${propelWebUrl}/swagger`}>here</a>.
         </p>
 
         <div className={styles.grid}>
           <div className={styles.card}>
             <h3>Autocomplete</h3>
-            <label
-              htmlFor="all"
-              style={{
-                marginRight: '.5em',
-              }}
-            >
-              All
-            </label>
-            <input
-              type="text"
-              id="all"
-              name="all"
-              style={{
-                marginRight: '.5em',
-              }}
+            <Autocomplete
+              label="All"
+              update={acAll.refetch}
               value={acAllValue}
-              onChange={(e) => setAcAllValue(e.target.value)}
-            ></input>
-            <button type="button" onClick={() => refetch()}>
-              Send
-            </button>
+              setValue={setAcAllValue}
+            />
           </div>
           <a href="https://nextjs.org/learn" className={styles.card}>
             <h3>Learn &rarr;</h3>
@@ -171,11 +165,17 @@ export default function Home() {
             overflow: 'auto',
           }}
         >
-          <>
-            {isError && <div>Error: {(error as any)?.message}</div>}
-            {isLoading && <div>Loading...</div>}
-            {isSuccess && <pre>{JSON.stringify(data, null, 2)}</pre>}
-          </>
+          {latestQuery && (
+            <>
+              {latestQuery.isError && (
+                <div>Error: {(latestQuery.error as any)?.message}</div>
+              )}
+              {latestQuery.isFetching && <div>Loading...</div>}
+              {latestQuery.isSuccess && (
+                <pre>{JSON.stringify(latestQuery.data, null, 2)}</pre>
+              )}
+            </>
+          )}
         </div>
       </main>
     );
