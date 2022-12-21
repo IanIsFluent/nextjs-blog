@@ -201,11 +201,12 @@ export default function Home() {
 
     return (
       <main>
-        <h1 className={styles.title}>Propel API Examples</h1>
-
-        <p className={styles.description}>
-          Using propel API <a href={`${propelWebUrl}/swagger`}>here</a>.
-        </p>
+        <h1 className={styles.title}>
+          <a href={`${propelWebUrl}/swagger`} target="_blank">
+            Propel API
+          </a>{' '}
+          Examples
+        </h1>
 
         <div className={styles.grid}>
           <div className={styles.card}>
