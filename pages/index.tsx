@@ -168,6 +168,13 @@ export default function Home() {
           return res.json();
         },
       }),
+      placesList: useQuery({
+        queryFn: async () => {
+          setActiveQueryName('placesList');
+          var res = await fetch(`${apiBaseUrl}/places`);
+          return res.json();
+        },
+      }),
     };
     const latestQuery = queries[activeQueryName];
     const resultText = useMemo(() => {
@@ -201,7 +208,7 @@ export default function Home() {
         </p>
 
         <div className={styles.grid}>
-          <div className={styles.card} style={{ minWidth: '23em' }}>
+          <div className={styles.card}>
             <h3>Autocomplete</h3>
             <Autocomplete
               label="All"
@@ -235,7 +242,7 @@ export default function Home() {
             />
           </div>
 
-          <div className={styles.card} style={{ minWidth: '23em' }}>
+          <div className={styles.card}>
             <h3>Institutions</h3>
             <div>
               <label
@@ -289,6 +296,29 @@ export default function Home() {
                 type="button"
                 onClick={() => {
                   queries.instSearch.refetch();
+                }}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.card}>
+            <h3>Places</h3>
+            <div>
+              <label
+                style={{
+                  display: 'inline-block',
+                  width: '5em',
+                  marginRight: '.5em',
+                }}
+              >
+                List
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  queries.placesList.refetch();
                 }}
               >
                 Send
