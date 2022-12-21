@@ -97,6 +97,9 @@ export default function Home() {
     const [instDetailsValue, setInstDetailsValue] = useState(
       'the-university-of-cambridge'
     );
+    const [instSearchValue, setInstSearchValue] = useState(
+      'subject=art&\nplacename=hull&\nradius=5'
+    );
 
     const queries = {
       acAll: useQuery({
@@ -145,18 +148,24 @@ export default function Home() {
         },
       }),
       instDetails: useQuery({
-        queryKey: ['instDetails', instDetailsValue],
         queryFn: async () => {
           setActiveQueryName('instDetails');
           var res = await fetch(
             `${apiBaseUrl}/institutions/${instDetailsValue}`
           );
-          const json = await res.json();
-          return {
-            ...json,
-            FundingSummary: json.FundingSummary,
-            FurtherInformation: json.FurtherInformation,
-          };
+          if (res.status === 404) {
+            return 'not found';
+          }
+          return res.json();
+        },
+      }),
+      instSearch: useQuery({
+        queryFn: async () => {
+          setActiveQueryName('instSearch');
+          var res = await fetch(
+            `${apiBaseUrl}/institutions?${instSearchValue}`
+          );
+          return res.json();
         },
       }),
     };
@@ -251,6 +260,35 @@ export default function Home() {
                 type="button"
                 onClick={() => {
                   queries.instDetails.refetch();
+                }}
+              >
+                Send
+              </button>
+            </div>
+            <div>
+              <label
+                style={{
+                  display: 'inline-block',
+                  width: '5em',
+                  marginRight: '.5em',
+                }}
+              >
+                Search
+              </label>
+
+              <textarea
+                rows={3}
+                style={{
+                  marginRight: '.5em',
+                  maxWidth: '12em',
+                }}
+                value={instSearchValue}
+                onChange={(e) => setInstSearchValue(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  queries.instSearch.refetch();
                 }}
               >
                 Send

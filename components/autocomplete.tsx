@@ -1,6 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-
 function Autocomplete({ label, update, value, setValue }) {
   return (
     <div>
