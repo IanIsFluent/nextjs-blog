@@ -1,20 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useStore } from '../state/store';
 import { API_BASE_URL } from '../util/constants';
 
-function Autocomplete({
-  label,
-  setActiveQueryName,
-}: {
-  label: string;
-  setActiveQueryName: (name: string) => void;
-}) {
+function Autocomplete({ label }: { label: string }) {
   const [value, setValue] = useState('art');
+  const { setQueryName } = useStore();
   const queryName = label.toLowerCase();
   const { refetch } = useQuery({
     queryKey: [queryName],
     queryFn: async () => {
-      setActiveQueryName(queryName);
+      setQueryName(queryName);
       var res = await fetch(
         `${API_BASE_URL}/autocomplete/${queryName}?q=${value}`
       );

@@ -1,13 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useStore } from '../state/store';
 import { API_BASE_URL } from '../util/constants';
 
-function InstitutionSearch({ setActiveQueryName }) {
+function InstitutionSearch() {
   const [value, setValue] = useState('subject=art&\nplacename=hull&\nradius=5');
+  const { setQueryName } = useStore();
   const { refetch } = useQuery({
     queryKey: ['instSearch'],
     queryFn: async () => {
-      setActiveQueryName('instSearch');
+      setQueryName('instSearch');
       var res = await fetch(`${API_BASE_URL}/institutions/?q=${value}`);
       return res.json();
     },

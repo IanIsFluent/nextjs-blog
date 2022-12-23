@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
+import { useStore } from '../state/store';
 
-function Results({ activeQueryName }) {
-  const { data, isLoading, isFetching } = useQuery([activeQueryName], {
+function Results() {
+  const queryName = useStore((state) => state.queryName);
+  const { data, isLoading, isFetching } = useQuery([queryName], {
     enabled: false,
   });
 
   return (
     <div>
-      <h3>
-        Results{activeQueryName && (isLoading || isFetching) && ' Loading...'}
-      </h3>
+      <h3>Results{queryName && (isLoading || isFetching) && ' Loading...'}</h3>
       <textarea
         rows={20}
         readOnly={true}

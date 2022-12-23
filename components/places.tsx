@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
+import { useStore } from '../state/store';
 import { API_BASE_URL } from '../util/constants';
 
-function Places({ setActiveQueryName }) {
+function Places() {
+  const { setQueryName } = useStore();
   const { refetch } = useQuery({
     queryKey: ['places'],
     queryFn: async () => {
-      setActiveQueryName('places');
+      setQueryName('places');
       var res = await fetch(`${API_BASE_URL}/places/`);
       return res.json();
     },
