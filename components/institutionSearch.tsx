@@ -2,22 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { API_BASE_URL } from '../util/constants';
 
-function Autocomplete({
-  label,
-  setActiveQueryName,
-}: {
-  label: string;
-  setActiveQueryName: (name: string) => void;
-}) {
-  const [value, setValue] = useState('art');
-  const queryName = label.toLowerCase();
+function InstitutionSearch({ setActiveQueryName }) {
+  const [value, setValue] = useState('subject=art&\nplacename=hull&\nradius=5');
   const { refetch } = useQuery({
-    queryKey: [queryName],
+    queryKey: ['instSearch'],
     queryFn: async () => {
-      setActiveQueryName(queryName);
-      var res = await fetch(
-        `${API_BASE_URL}/autocomplete/${queryName}?q=${value}`
-      );
+      setActiveQueryName('instSearch');
+      var res = await fetch(`${API_BASE_URL}/institutions/?q=${value}`);
       return res.json();
     },
   });
@@ -25,31 +16,33 @@ function Autocomplete({
   return (
     <div>
       <label
-        htmlFor="all"
         style={{
           display: 'inline-block',
           width: '5em',
           marginRight: '.5em',
         }}
       >
-        {label}
+        Search
       </label>
-      <input
-        type="text"
-        id="all"
-        name="all"
+
+      <textarea
+        rows={3}
         style={{
           marginRight: '.5em',
           maxWidth: '12em',
         }}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-      ></input>
-      <button type="button" onClick={() => refetch()}>
+      />
+      <button
+        type="button"
+        onClick={() => {
+          refetch();
+        }}
+      >
         Send
       </button>
     </div>
   );
 }
-
-export { Autocomplete };
+export { InstitutionSearch };

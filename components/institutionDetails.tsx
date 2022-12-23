@@ -2,22 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { API_BASE_URL } from '../util/constants';
 
-function Autocomplete({
-  label,
-  setActiveQueryName,
-}: {
-  label: string;
-  setActiveQueryName: (name: string) => void;
-}) {
-  const [value, setValue] = useState('art');
-  const queryName = label.toLowerCase();
+function InstitutionDetails({ setActiveQueryName }) {
+  const [value, setValue] = useState('the-university-of-cambridge');
   const { refetch } = useQuery({
-    queryKey: [queryName],
+    queryKey: ['instDetails'],
     queryFn: async () => {
-      setActiveQueryName(queryName);
-      var res = await fetch(
-        `${API_BASE_URL}/autocomplete/${queryName}?q=${value}`
-      );
+      setActiveQueryName('instDetails');
+      var res = await fetch(`${API_BASE_URL}/institutions/${value}`);
       return res.json();
     },
   });
@@ -32,7 +23,7 @@ function Autocomplete({
           marginRight: '.5em',
         }}
       >
-        {label}
+        Details
       </label>
       <input
         type="text"
@@ -52,4 +43,4 @@ function Autocomplete({
   );
 }
 
-export { Autocomplete };
+export { InstitutionDetails };
